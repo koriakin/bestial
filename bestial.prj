@@ -1,2 +1,5 @@
 verilog work "top.v"
 verilog work "vga.v"
+verilog work "kbd.v"
+verilog work "cpu.v"
+verilog work "sync.v"

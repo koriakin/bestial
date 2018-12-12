@@ -1,0 +1,72 @@
+instrukcja: 18 bitów
+rejestr: 18 bitów × 16
+pamięć: 9/18 bitów × 4096/2048
+12-bitowe adresy
+
+oooooo aaaa bbbb cccc
+
+000000 bbbb aaaa dddd AND d, a, b
+000001 bbbb aaaa dddd OR  d, a, b
+000010 bbbb aaaa dddd XOR d, a, b
+000011 bbbb aaaa dddd MUL d, a, b
+000100 bbbb aaaa dddd ADD d, a, b
+000101 bbbb aaaa dddd SUB d, a, b
+000110 bbbb aaaa dddd ADDC d, a, b
+000111 bbbb aaaa dddd SUBC d, a, b
+001000 bbbb aaaa dddd SHL d, a, b
+
+001010 bbbb aaaa dddd SHR d, a, b
+001011 bbbb aaaa dddd SAR d, a, b
+001100 iiii aaaa dddd SHL d, a, i
+
+001110 iiii aaaa dddd SHR d, a, i
+001111 iiii aaaa dddd SAR d, a, i
+010000 iiii aaaa dddd LDB a, [b+i]
+010001 iiii aaaa dddd LDW a, [b+i]
+010010 iiii aaaa dddd STB [b+i], a
+010011 iiii aaaa dddd STW [b+i], a
+
+011iii iiii iiii cccc Jc i
+100iii iiii iiii aaaa BL a, i
+101iii iiii iiii aaaa BR a, i
+
+11000i iiii iiii aaaa MOV a, i
+11001i iiii iiii aaaa SETHI a, i
+11010i iiii iiii aaaa ADD a, a, i
+11011i iiii iiii aaaa CMP a, i
+
+111110 ---- ---- aaaa READKBD a
+111111 cccc bbbb aaaa PUTCHAR a, b, c    [x, y, d]
+
+
+flags:
+Z C O S
+
+Z = (res == 0)
+S = res[31]
+O = signed overflow
+C = ((a+b)[32]) unsigned overflow
+
+
+cccc
+
+0000 Z
+0001 !Z
+0010 S
+0011 !S
+0100 O
+0101 !O
+0110 C
+0111 !C
+1000 L  (S ^ O)
+1001 GE !(S ^ O)
+1010 G  !(S ^ O) && !Z
+1011 LE (S ^ O) || Z
+1100 A (C && !Z)
+1101 NA !(C && !Z)
+1110 1
+1111 0
+
+a - b == a + (~b) + 1
+
+a - b - c == a + (~b) + ~c

@@ -1,3 +1,4 @@
+set -e
 # Synteza (.v -> .ngc)
 xst -ifn bestial.xst
 # Linkowanie (.ngc -> .ngd)

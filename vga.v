@@ -4,6 +4,10 @@ module vga(
 	output reg [2:0] R,
 	output reg [2:0] G,
 	output reg [2:1] B,
+	input wire we,
+	input wire [6:0] wx,
+	input wire [4:0] wy,
+	input wire [8:0] wd,
 	input wire clk
 );
 
@@ -28,23 +32,6 @@ reg [8:0] framebuffer [2047:0];
 
 integer i;
 
-initial begin
-	framebuffer[0] = 9'h48;
-	framebuffer[1] = 9'h65;
-	framebuffer[2] = 9'h6c;
-	framebuffer[3] = 9'h6c;
-	framebuffer[4] = 9'h6f;
-	framebuffer[5] = 9'h2c;
-	framebuffer[6] = 9'h20;
-	framebuffer[7] = 9'h77;
-	framebuffer[8] = 9'h6f;
-	framebuffer[9] = 9'h72;
-	framebuffer[10] = 9'h6c;
-	framebuffer[11] = 9'h64;
-	framebuffer[12] = 9'h21;
-	for (i = 13; i < 2048; i = i + 1)
-		framebuffer[i] = 9'h000;
-end
 initial begin
 font[0] = 9'h000;
 font[1] = 9'h000;
@@ -2133,6 +2120,9 @@ always @(posedge clk) begin
 		R <= 0;
 		G <= 0;
 		B <= 0;
+	end
+	if (we) begin
+		framebuffer[wx + wy * 11'd80] <= wd;
 	end
 end
 
