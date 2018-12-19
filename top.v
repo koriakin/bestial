@@ -7,12 +7,12 @@ module top(
 	output wire [2:0] OutRed,
 	output wire [2:0] OutGreen,
 	output wire [2:1] OutBlue,
+	input wire [7:0] sw,
+	input wire [3:0] btn,
 	input wire uclk
 );
 
 wire vclk;
-
-assign Led = 0;
 
 wire [7:0] kd;
 wire kv;
@@ -50,8 +50,15 @@ cpu cpu_inst (
 	.vwx(wx),
 	.vwy(wy),
 	.vwd(wd),
+	.led(Led),
 	.clk(vclk)
 );
+
+/*
+assign vclk = btn[0];
+assign kv = sw[0];
+assign kd = 8'h12;
+*/
 
 DCM_SP #(
 	.CLKFX_DIVIDE(26),

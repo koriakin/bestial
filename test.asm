@@ -26,13 +26,18 @@ letter1:
 add r1, r1, 0x41-10
 print1:
 
+bl r15, putc
+jmp loop
+
+putc:
 putchar r8, r9, r1
 add r8, r8, 1
 cmp r8, 80
-jnz loop
+jnz ret
 mov r8, 0
 add r9, r9, 1
 cmp r9, 25
-jnz loop
+jnz ret
 mov r9, 0
-jmp loop
+ret:
+br r14, 0

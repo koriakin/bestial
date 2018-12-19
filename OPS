@@ -8,7 +8,7 @@ oooooo aaaa bbbb cccc
 000000 bbbb aaaa dddd AND d, a, b
 000001 bbbb aaaa dddd OR  d, a, b
 000010 bbbb aaaa dddd XOR d, a, b
-000011 bbbb aaaa dddd MUL d, a, b
+000011 bbbb aaaa dddd MUL d, a, b	<<<
 000100 bbbb aaaa dddd ADD d, a, b
 000101 bbbb aaaa dddd SUB d, a, b
 000110 bbbb aaaa dddd ADDC d, a, b
@@ -21,10 +21,10 @@ oooooo aaaa bbbb cccc
 
 001110 iiii aaaa dddd SHR d, a, i
 001111 iiii aaaa dddd SAR d, a, i
-010000 iiii aaaa dddd LDB a, [b+i]
-010001 iiii aaaa dddd LDW a, [b+i]
-010010 iiii aaaa dddd STB [b+i], a
-010011 iiii aaaa dddd STW [b+i], a
+010000 iiii aaaa dddd LDB a, [b+i]	<<
+010001 iiii aaaa dddd LDW a, [b+i]	<<
+010010 iiii aaaa dddd STB [b+i], a	<<
+010011 iiii aaaa dddd STW [b+i], a	<<
 
 011iii iiii iiii cccc Jc i
 100iii iiii iiii aaaa BL a, i
@@ -36,16 +36,15 @@ oooooo aaaa bbbb cccc
 11011i iiii iiii aaaa CMP a, i
 
 111110 ---- ---- aaaa READKBD a
-111111 cccc bbbb aaaa PUTCHAR a, b, c    [x, y, d]
+111111 cccc bbbb aaaa PUTCHAR a, b, c   [x, y, d]
 
 
 flags:
-Z C O S
 
-Z = (res == 0)
-S = res[31]
-O = signed overflow
-C = ((a+b)[32]) unsigned overflow
+0 Z = (res == 0)
+1 S = res[31]
+2 O = signed overflow
+3 C = ((a+b)[32]) unsigned overflow
 
 
 cccc

@@ -14,4 +14,4 @@ xlat = bytes(
 
 for i, x in enumerate(d):
     sx = xlat[x]
-    print(f'font[{i}] = 9\'h{sx:03x}')
+    print(f'{sx:03x}')

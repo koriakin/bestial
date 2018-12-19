@@ -55,7 +55,7 @@ with open(sys.argv[2], 'w') as f:
                 if d != a:
                     raise ValueError(d)
                 i = parse_imm(b, 9, signed=True)
-                res = 0x36000 | i << 4 | a
+                res = 0x34000 | i << 4 | a
         elif op == 'cmp':
             a, i = args
             a = parse_reg(a)
@@ -102,3 +102,5 @@ with open(sys.argv[2], 'w') as f:
         else:
             raise ValueError(op, args)
         f.write(f'{res:05x}\n')
+    for _ in range(1024 - len(insns)):
+        f.write(f'{0:05x}\n')
