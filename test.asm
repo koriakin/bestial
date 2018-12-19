@@ -13,8 +13,7 @@ letter0:
 add r1, r1, 0x41-10
 print0:
 
-putchar r8, r9, r1
-add r8, r8, 1
+bl r15, putc
 
 mov r2, 0xf
 and r1, r0, r2
@@ -26,6 +25,8 @@ letter1:
 add r1, r1, 0x41-10
 print1:
 
+bl r15, putc
+mov r1, 0x20
 bl r15, putc
 jmp loop
 
@@ -40,4 +41,4 @@ cmp r9, 25
 jnz ret
 mov r9, 0
 ret:
-br r14, 0
+br r15, 0

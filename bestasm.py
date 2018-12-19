@@ -61,6 +61,19 @@ with open(sys.argv[2], 'w') as f:
             a = parse_reg(a)
             i = parse_imm(i, 9, signed=True)
             res = 0x36000 | i << 4 | a
+        elif op == 'bl':
+            a, l = args
+            a = parse_reg(a)
+            l = labels[l]
+            res = 0x20000 | l << 4 | a
+        elif op == 'br':
+            a, l = args
+            a = parse_reg(a)
+            if l in labels:
+                l = labels[l]
+            else:
+                l = parse_imm(l, 11)
+            res = 0x28000 | l << 4 | a
         elif op == 'jc':
             a, = args
             a = labels[a]
