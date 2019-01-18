@@ -10,7 +10,7 @@ module decode (
 	output reg do_shift,
 	output reg do_write,
 	output reg do_readkbd,
-	output reg do_putchar,
+	output reg do_stb,
 	output reg do_jump,
 	output reg jump_offset,
 	output reg [3:0] cond,
@@ -42,7 +42,7 @@ always @(*) begin
 	do_shift <= 0;
 	do_write <= 0;
 	do_readkbd <= 0;
-	do_putchar <= 0;
+	do_stb <= 0;
 	do_jump <= 0;
 	jump_offset <= 1'bx;
 	cond <= 4'bxxxx;
@@ -69,6 +69,15 @@ always @(*) begin
 			imm <= ir[11:8];
 			do_shift <= 1;
 			shift_op <= ir[13:12];
+		end
+		6'b010010: begin
+			rs1 <= ir[7:4];
+			rs2 <= ir[3:0];
+			imm_s1 <= 0;
+			imm_s2 <= 1;
+			imm <= ir[11:8];
+			alu_op <= ALU_ADD;
+			do_stb <= 1;
 		end
 		6'b011xxx: begin
 			do_jump <= 1;
@@ -136,12 +145,6 @@ always @(*) begin
 			rd <= ir[3:0];
 			do_readkbd <= 1;
 			do_write <= 1;
-		end
-		6'b111111: begin
-			rd <= ir[3:0];
-			rs1 <= ir[7:4];
-			rs2 <= ir[11:8];
-			do_putchar <= 1;
 		end
 	endcase
 end

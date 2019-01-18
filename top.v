@@ -30,27 +30,66 @@ kbd kbd_inst (
 	.clk(vclk)
 );
 
+wire [12:0] vga_wraddr;
+wire [8:0] vga_wrdata;
+wire vga_wrvalid;
+wire vga_wrready;
+
+wire [12:0] led_wraddr;
+wire [8:0] led_wrdata;
+wire led_wrvalid;
+wire led_wrready;
+
+wire [16:0] cpu_wraddr;
+wire [8:0] cpu_wrdata;
+wire cpu_wrvalid;
+wire cpu_wrready;
+
 vga vga_inst (
 	.HS(HSYNC),
 	.VS(VSYNC),
 	.R(OutRed),
 	.G(OutGreen),
 	.B(OutBlue),
-	.we(we),
-	.wx(wx),
-	.wy(wy),
-	.wd(wd),
+	.bus_wraddr(vga_wraddr),
+	.bus_wrdata(vga_wrdata),
+	.bus_wrvalid(vga_wrvalid),
+	.bus_wrready(vga_wrready),
 	.clk(vclk)
 );
 
 cpu cpu_inst (
 	.kd(kd),
 	.kv(kv),
-	.vwe(we),
-	.vwx(wx),
-	.vwy(wy),
-	.vwd(wd),
-	.led(Led),
+	.bus_wraddr(cpu_wraddr),
+	.bus_wrdata(cpu_wrdata),
+	.bus_wrvalid(cpu_wrvalid),
+	.bus_wrready(cpu_wrready),
+	.clk(vclk)
+);
+
+led led_inst (
+	.bus_wraddr(led_wraddr),
+	.bus_wrdata(led_wrdata),
+	.bus_wrvalid(led_wrvalid),
+	.bus_wrready(led_wrready),
+	.out(Led),
+	.clk(vclk)
+);
+
+wrswitch wrswitch_inst (
+	.m_wraddr(cpu_wraddr),
+	.m_wrdata(cpu_wrdata),
+	.m_wrvalid(cpu_wrvalid),
+	.m_wrready(cpu_wrready),
+	.s0_wraddr(vga_wraddr),
+	.s0_wrdata(vga_wrdata),
+	.s0_wrvalid(vga_wrvalid),
+	.s0_wrready(vga_wrready),
+	.s2_wraddr(led_wraddr),
+	.s2_wrdata(led_wrdata),
+	.s2_wrvalid(led_wrvalid),
+	.s2_wrready(led_wrready),
 	.clk(vclk)
 );
 

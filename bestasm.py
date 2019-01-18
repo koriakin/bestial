@@ -44,6 +44,11 @@ with open(sys.argv[2], 'w') as f:
             a = parse_reg(a)
             i = parse_imm(i, 9, signed=True)
             res = 0x30000 | i << 4 | a
+        elif op == 'sethi':
+            a, i = args
+            a = parse_reg(a)
+            i = parse_imm(i, 9)
+            res = 0x32000 | i << 4 | a
         elif op == 'add':
             d, a, b = args
             d = parse_reg(d)
@@ -90,18 +95,18 @@ with open(sys.argv[2], 'w') as f:
             a, = args
             a = parse_reg(a)
             res = 0x3e000 | a
-        elif op == 'putchar':
-            a, b, c = args
-            a = parse_reg(a)
-            b = parse_reg(b)
-            c = parse_reg(c)
-            res = 0x3f000 | c << 8 | b << 4 | a
         elif op == 'and':
             d, a, b = args
             d = parse_reg(d)
             a = parse_reg(a)
             b = parse_reg(b)
             res = 0x00000 | b << 8 | a << 4 | d
+        elif op == 'or':
+            d, a, b = args
+            d = parse_reg(d)
+            a = parse_reg(a)
+            b = parse_reg(b)
+            res = 0x01000 | b << 8 | a << 4 | d
         elif op == 'shr':
             d, a, b = args
             d = parse_reg(d)
@@ -112,6 +117,22 @@ with open(sys.argv[2], 'w') as f:
             else:
                 i = parse_imm(b, 4)
                 res = 0x0e000 | i << 8 | a << 4 | d
+        elif op == 'shl':
+            d, a, b = args
+            d = parse_reg(d)
+            a = parse_reg(a)
+            if b.startswith('r'):
+                b = parse_reg(b)
+                res = 0x08000 | b << 8 | a << 4 | d
+            else:
+                i = parse_imm(b, 4)
+                res = 0x0c000 | i << 8 | a << 4 | d
+        elif op == 'stb':
+            a, i, d = args
+            d = parse_reg(d)
+            a = parse_reg(a)
+            i = parse_imm(i, 4)
+            res = 0x12000 | i << 8 | a << 4 | d
         else:
             raise ValueError(op, args)
         f.write(f'{res:05x}\n')

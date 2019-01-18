@@ -21,10 +21,10 @@ oooooo aaaa bbbb cccc
 
 001110 iiii aaaa dddd SHR d, a, i
 001111 iiii aaaa dddd SAR d, a, i
-010000 iiii aaaa dddd LDB a, [b+i]	<<
-010001 iiii aaaa dddd LDW a, [b+i]	<<
-010010 iiii aaaa dddd STB [b+i], a	<<
-010011 iiii aaaa dddd STW [b+i], a	<<
+010000 iiii aaaa dddd LDB d, [a+i]	<<
+010001 iiii aaaa dddd LDW d, [a+i]	<<
+010010 iiii aaaa dddd STB [a+i], d	<<
+010011 iiii aaaa dddd STW [a+i], d	<<
 
 011iii iiii iiii cccc Jc i
 100iii iiii iiii aaaa BL a, i
@@ -69,3 +69,35 @@ cccc
 a - b == a + (~b) + 1
 
 a - b - c == a + (~b) + ~c
+
+
+00000:40000
+
+00000:20000 block RAM
+20000:40000 AXI
+
+20000:21000 VGA
+22000:24000 KBD
+24000:26000 LED
+26000:28000 SW
+28000:2a000 BTN
+
+-> WRADDR[12:1]
+-> WRWE[1:0]
+-> WRDATA[17:0]
+...
+
+-> WRADDR[12:0]
+-> WRDATA[8:0]
+-> WRVALID
+<- WRREADY
+
+-> RDADDR[12:0]
+-> RDID[0:0]
+-> RDVALID
+<- RDREADY
+
+<- RDDATA[8:0]
+<- RDDID[0:0]
+<- RDDVALID
+-> RDDREADY

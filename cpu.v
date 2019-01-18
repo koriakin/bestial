@@ -1,17 +1,13 @@
 module cpu(
 	input wire [7:0] kd,
 	input wire kv,
-	output reg vwe,
-	output reg [6:0] vwx,
-	output reg [4:0] vwy,
-	output reg [8:0] vwd,
+	output wire [16:0] bus_wraddr,
+	output wire [8:0] bus_wrdata,
+	output wire bus_wrvalid,
+	input wire bus_wrready,
 	output wire [7:0] led,
 	input wire clk
 );
-
-initial begin
-	vwe = 0;
-end
 
 reg [7:0] state;
 reg [10:0] pc;
@@ -25,7 +21,7 @@ parameter STATE_EX_ALU = 8'h04;
 parameter STATE_EX_SHIFT = 8'h05;
 parameter STATE_EX_JUMP  = 8'h06;
 parameter STATE_EX_READKBD = 8'h07;
-parameter STATE_EX_PUTCHAR = 8'h08;
+parameter STATE_EX_STB = 8'h08;
 
 initial pc = 0;
 initial state = STATE_BOOT;
@@ -50,7 +46,7 @@ wire [3:0] d_rd;
 wire [2:0] alu_op;
 wire [1:0] shift_op;
 wire [3:0] cond;
-wire do_write, do_alu, do_shift, do_readkbd, do_putchar, do_jump;
+wire do_write, do_alu, do_shift, do_readkbd, do_stb, do_jump;
 wire jump_offset;
 wire imm_s1, imm_s2;
 wire [17:0] imm;
@@ -67,7 +63,7 @@ decode decode_inst (
 	.do_shift(do_shift),
 	.do_write(do_write),
 	.do_readkbd(do_readkbd),
-	.do_putchar(do_putchar),
+	.do_stb(do_stb),
 	.do_jump(do_jump),
 	.jump_offset(jump_offset),
 	.cond(cond),
@@ -107,8 +103,17 @@ jc jc_inst (
 	.out(jc_out)
 );
 
+wire [17:0] rd_rs1;
+wire [17:0] rd_rs2;
+
+assign rd_rs1 = regs[d_rs1];
+assign rd_rs2 = regs[d_rs2];
+
+assign bus_wrvalid = state == STATE_EX_STB;
+assign bus_wraddr = alu_res;
+assign bus_wrdata = rd_rs2;
+
 always @(posedge clk) begin
-	vwe <= 0;
 	case (state)
 		STATE_BOOT: begin
 			if (ignition[7])
@@ -120,16 +125,16 @@ always @(posedge clk) begin
 			state <= STATE_DECODE;
 		end
 		STATE_DECODE: begin
-			s1 <= imm_s1 ? imm : regs[d_rs1];
-			s2 <= imm_s2 ? imm : regs[d_rs2];
+			s1 <= imm_s1 ? imm : rd_rs1;
+			s2 <= imm_s2 ? imm : rd_rs2;
 			if (do_alu)
 				state <= STATE_EX_ALU;
 			else if (do_shift)
 				state <= STATE_EX_SHIFT;
 			else if (do_jump)
 				state <= STATE_EX_JUMP;
-			else if (do_putchar)
-				state <= STATE_EX_PUTCHAR;
+			else if (do_stb)
+				state <= STATE_EX_STB;
 			else if (do_readkbd)
 				state <= STATE_EX_READKBD;
 			else
@@ -159,12 +164,9 @@ always @(posedge clk) begin
 				state <= STATE_FETCH;
 			end
 		end
-		STATE_EX_PUTCHAR: begin
-			vwe <= 1;
-			vwx <= regs[d_rd];
-			vwy <= s1;
-			vwd <= s2;
-			state <= STATE_FETCH;
+		STATE_EX_STB: begin
+			if (bus_wrvalid && bus_wrready)
+				state <= STATE_FETCH;
 		end
 	endcase
 end

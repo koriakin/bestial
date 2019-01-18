@@ -1,4 +1,5 @@
 set -e
+python bestasm.py test.asm test.bin
 # Synteza (.v -> .ngc)
 xst -ifn bestial.xst
 # Linkowanie (.ngc -> .ngd)

@@ -4,10 +4,10 @@ module vga(
 	output reg [2:0] R,
 	output reg [2:0] G,
 	output reg [2:1] B,
-	input wire we,
-	input wire [6:0] wx,
-	input wire [4:0] wy,
-	input wire [8:0] wd,
+	input wire [12:0] bus_wraddr,
+	input wire [8:0] bus_wrdata,
+	input wire bus_wrvalid,
+	output wire bus_wrready,
 	input wire clk
 );
 
@@ -47,6 +47,8 @@ reg vs_2, vs_1;
 wire hs_0;
 wire vs_0;
 
+assign bus_wrready = 1;
+
 always @(posedge clk) begin
 	// 1 <= 0
 	chr <= framebuffer[11'd80 * vpos[8:4] + hpos];
@@ -73,8 +75,8 @@ always @(posedge clk) begin
 		G <= 0;
 		B <= 0;
 	end
-	if (we) begin
-		framebuffer[wx + wy * 11'd80] <= wd;
+	if (bus_wrvalid) begin
+		framebuffer[bus_wraddr[6:0] + bus_wraddr[11:7] * 11'd80] <= bus_wrdata;
 	end
 end
 

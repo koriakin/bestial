@@ -1,8 +1,14 @@
 mov r8, 0
 mov r9, 0
+mov r10, 0
 
 loop:
 readkbd r0
+
+mov r4, 0
+sethi r4, 0x120
+stb r4, 0, r10
+add r10, r10, 1
 
 shr r1, r0, 4
 cmp r1, 10
@@ -31,7 +37,12 @@ bl r15, putc
 jmp loop
 
 putc:
-putchar r8, r9, r1
+shl r3, r9, 7
+or r3, r3, r8
+mov r4, 0
+sethi r4, 0x100
+or r3, r3, r4
+stb r3, 0, r1
 add r8, r8, 1
 cmp r8, 80
 jnz ret
